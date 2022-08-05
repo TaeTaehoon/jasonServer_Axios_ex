@@ -1,24 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import { useCallback, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux/es/exports";
+import {
+  addNumber,
+  minusNumber,
+  setNumber,
+} from "./redux/modules/counterSlice";
+import axios from "axios";
 
 function App() {
+  const data = useSelector((state) => state.counter.number);
+  const dispatch = useDispatch();
+  const fetchNum = async () => {
+    const { data } = await axios.get("http://localhost:3003/number");
+    dispatch(setNumber(data.num));
+  };
+
+  useEffect(() => {
+    fetchNum();
+  }, []);
+  const plusNum = useCallback(() => {
+    dispatch(addNumber(1));
+  }, [dispatch]);
+  const minusNum = useCallback(() => {
+    dispatch(minusNumber(1));
+  }, [dispatch]);
+  const saveNum = useCallback(() => {
+    const newNumber = { num: data };
+    axios.post("http://localhost:3003/number", newNumber);
+  }, [data]);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <h1>{data}</h1>
+      <button onClick={plusNum}>+</button>
+      <button onClick={minusNum}>-</button>
+      <button onClick={saveNum}>save number!</button>
+    </>
   );
 }
 
