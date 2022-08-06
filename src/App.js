@@ -1,9 +1,10 @@
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux/es/exports";
 import {
-  addNumber,
   minusNumber,
   setNumber,
+  __addNumber,
+  __saveNumber,
 } from "./redux/modules/counterSlice";
 import axios from "axios";
 
@@ -18,16 +19,17 @@ function App() {
   useEffect(() => {
     fetchNum();
   }, []);
+
   const plusNum = useCallback(() => {
-    dispatch(addNumber(1));
+    dispatch(__addNumber(1));
   }, [dispatch]);
   const minusNum = useCallback(() => {
     dispatch(minusNumber(1));
   }, [dispatch]);
   const saveNum = useCallback(() => {
-    const newNumber = { num: data };
-    axios.post("http://localhost:3003/number", newNumber);
+    dispatch(__saveNumber(data));
   }, [data]);
+
   return (
     <>
       <h1>{data}</h1>
